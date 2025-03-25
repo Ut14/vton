@@ -15,11 +15,11 @@ HUMAN_PARSE_OUTPUT = "output/human_parsed"
 SCHP_SCRIPT = "Self-Correction-Human-Parsing/simple_extractor.py"
 SCHP_CHECKPOINT = "checkpoints/final.pth"
 MASK_OUTPUT_FOLDER = "output/masked_cloth"
-POSE_JSON_OUTPUT = "output/pose_output"
+POSE_JSON_OUTPUT = "output\pose_output"
 TRYON_OUTPUT = "output/final_tryon"
 MODEL_IMAGE_DIR = "inputs/image"  # Directory where model images are stored
 CLOTH_IMAGE_DIR = "inputs/cloth"  # Directory where cloth images are stored
-PAIRS_FILE = "output/test_pairs.txt"  # File to store model and cloth image pairs
+PAIRS_FILE = "inputs/test_pairs.txt"  # File to store model and cloth image pairs
 
 # Ensure output directories exist
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
@@ -129,19 +129,25 @@ CHECKPOINT_DIR = "checkpoints"
 SAVE_DIR = "output"
 
 # Ensure the required directories exist
-pose_output_json = os.path.join(POSE_JSON_OUTPUT, "pose_output", "lower_model_no_bg_keypoints.json")
-human_parse_output_img = os.path.join(HUMAN_PARSE_OUTPUT, "human_parsed", "lower_model_no_bg.png")
+pose_output_json = os.path.join(POSE_JSON_OUTPUT, "lower_model_no_bg_keypoints.json")
+human_parse_output_img = os.path.join(HUMAN_PARSE_OUTPUT, "lower_model_no_bg.png")
 masked_cloth_img = os.path.join(MASK_OUTPUT_FOLDER, "printed_tshirt.png")
+
+print("\n🔍 Final verification before try-on:")
+print(f"Model image exists: {os.path.exists(INPUT_IMAGE)}")
+print(f"Cloth image exists: {os.path.exists(CLOTH_IMAGE)}")
+print(f"Pose JSON exists: {os.path.exists(pose_output_json)}")
+print(f"Human parse exists: {os.path.exists(human_parse_output_img)}")
+print(f"Cloth mask exists: {os.path.exists(masked_cloth_img)}")
 
 # Prepare required arguments for test.py
 test_command = [
     sys.executable, TEST_SCRIPT,
-    "--name", "output",
-    "--input-image", os.path.join(OUTPUT_FOLDER, "lower_model_no_bg.png"),
-    "--input-cloth", masked_cloth_img,
-    "--pose-json", pose_output_json,
-    "--human-parse", human_parse_output_img,
-    "--output-dir", TRYON_OUTPUT
+    "--name", "final_tryon",  # Explicit output folder name
+    "--dataset_dir", os.path.abspath("inputs"),  # Use absolute paths
+    "--checkpoint_dir", os.path.abspath(CHECKPOINT_DIR),
+    "--save_dir", os.path.abspath(SAVE_DIR),
+    "--display_freq", "1",  # Show progress every batch
 ]
 
 # Check if the paths for the required files exist
