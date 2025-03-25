@@ -139,8 +139,9 @@ class VITONDataset(data.Dataset):
         pose_rgb = transforms.Resize(self.load_width, interpolation=2)(pose_rgb)
         pose_rgb = self.transform(pose_rgb)  # [-1,1]
 
-        pose_name = img_name.replace('.jpg', '_keypoints.json')
-        with open(osp.join(self.data_path, 'openpose-json', pose_name), 'r') as f:
+        pose_name = img_name.replace('.png', '_keypoints.json')
+        with open(osp.join(self.data_path, 'openpose-json', pose_name), 'r', encoding='utf-8') as f:
+            print("🕵️ Reading pose JSON from:", pose_name)
             pose_label = json.load(f)
             pose_data = pose_label['people'][0]['pose_keypoints_2d']
             pose_data = np.array(pose_data)
